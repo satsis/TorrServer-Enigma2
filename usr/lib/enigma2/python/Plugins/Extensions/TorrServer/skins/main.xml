@@ -1,0 +1,13 @@
+<screen name="TorrSettings" position="center,center" size="600,450" title="Backup settings for current skin">
+  <widget name="text" position="69,339" size="500,30" foregroundColor="#00009a00" font="Regular;22" halign="right" transparent="1" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_red.png" position="5,380" size="140,40" transparent="1" alphatest="on" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_green.png" position="155,380" size="140,40" transparent="1" alphatest="on" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_yellow.png" position="305,380" size="140,40" transparent="1" alphatest="on" />
+  <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_blue.png" position="455,380" size="140,40" transparent="1" alphatest="on" />
+  <widget name="key_red" position="0,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
+  <widget name="key_green" position="150,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
+  <widget name="key_yellow" position="300,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
+  <widget name="key_blue" position="450,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
+  <widget name="statusserver" position="10,60" size="275,140" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+  <widget name="statusautostart" position="10,120" size="275,140" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+</screen>
