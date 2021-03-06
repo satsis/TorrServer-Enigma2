@@ -6,7 +6,7 @@ Tested on VU + Ultimo 4K Satellite Receiver
 The webserver is available at ip:8091
 
 The plugin can:
-Show server status
-Start the server
-Stop server
-Run at system startup
+* Show server status
+* Start the server
+* Stop server
+* Run at system startup
