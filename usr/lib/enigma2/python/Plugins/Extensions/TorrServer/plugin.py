@@ -12,6 +12,8 @@ from Screens.Console import Console
 import subprocess
 import gettext
 import os
+import re
+import urllib2 as urlreq
 
 # Set default configuration
 config.plugins.torrserver = ConfigSubsection()
@@ -35,6 +37,17 @@ def get_pid(name):
     except subprocess.CalledProcessError:
         return False
 
+def get_url(url):
+    try:
+        req = urlreq.Request(url)
+        html = urlreq.urlopen(req).read()
+        r1 = re.search('<title>(.*)<', html)
+        r1 = r1.group(1)
+        r1 = r1.strip()
+        return r1
+    except urlreq.URLError:
+        return False
+
 class TorrSettings(Screen):
    def __init__(self, session):
       with open('/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/skins/main.xml', 'r') as f:
@@ -45,6 +58,7 @@ class TorrSettings(Screen):
       self["key_green"] = Label(_("Start"))
       self["key_yellow"] = Label(_("Stop"))
       self["key_blue"] = Label(_("AutoStart"))
+      self['serverver'] = Label()
       self['statusserver'] = Label()
       self['statusautostart'] = Label()
       self["shortcuts"] = ActionMap(["ShortcutActions", "WizardActions"],
@@ -66,6 +80,8 @@ class TorrSettings(Screen):
           self['statusserver'].setText(_('TorrServer is running'))
       else:
           self['statusserver'].setText(_('TorrServer is down :('))
+      r1 = get_url('http://127.0.0.1:8090/')
+      self['serverver'].setText(r1)
 
    def cancel(self):
       self.close()
@@ -79,6 +95,8 @@ class TorrSettings(Screen):
               self['statusserver'].setText(_('TorrServer is running'))
           else:
               self['statusserver'].setText(_('TorrServer is down :('))
+          r1 = get_url('http://127.0.0.1:8090/')
+          self['serverver'].setText(r1)
 
    def stop(self):
       os.system("killall TorrServer-linux-arm7")
@@ -101,8 +119,8 @@ def autoStart(reason, **kwargs): # starts DURING the Enigma2 booting
         fh = open("NUL","w")
         p = subprocess.Popen(['/usr/bin/TorrServer-linux-arm7'], shell=False, stdout = fh, stderr = fh)
         fh.close()
-        with open("/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/log.txt","a") as f:
-            f.write("reason = %s, config.plugins.torrserver.autostart.value = %s \n" % (reason, config.plugins.torrserver.autostart.value))
+        #with open("/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/log.txt","a") as f:
+            #f.write("reason = %s, config.plugins.torrserver.autostart.value = %s \n" % (reason, config.plugins.torrserver.autostart.value))
 
 def main(session, **kwargs):
    session.open(TorrSettings)
