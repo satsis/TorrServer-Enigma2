@@ -10,6 +10,7 @@ from Components.config import config, ConfigOnOff, ConfigText, ConfigSubsection
 from os import environ, system
 from Screens.Console import Console
 from enigma import eServiceReference
+from Screens.InfoBar import InfoBar, MoviePlayer
 import subprocess
 import gettext
 import os
@@ -27,6 +28,11 @@ environ["LANGUAGE"] = lang[:2]
 gettext.bindtextdomain("enigma2", resolveFilename(SCOPE_LANGUAGE))
 gettext.textdomain("enigma2")
 gettext.bindtextdomain("TorrSettings", "%s%s" % (resolveFilename(SCOPE_PLUGINS), "Extensions/TorrServer/locale/"))
+
+class TorrPlayer(MoviePlayer):
+    def __init__(self, session, service):
+        MoviePlayer.__init__(self, session, service)
+        self.started = False
 
 def _(txt):
    t = gettext.dgettext("TorrSettings", txt)
@@ -118,10 +124,11 @@ class TorrSettings(Screen):
       
    def action(self, currentSelect = None):
       if currentSelect is None:
-         currentSelect = self["menu"].getCurrent()[1]
+         currentSelect = str(self["menu"].getCurrent()[1])
          self.hide()
          sref = eServiceReference(4097, 0, currentSelect)
-         self.session.nav.playService(sref)
+         self.session.open(TorrPlayer, sref)
+         #self.session.nav.playService(sref)
 
    def start(self):
       if get_pid("TorrServer-linux-arm7") == False:
