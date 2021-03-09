@@ -8,7 +8,17 @@
   <widget name="key_green" position="150,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
   <widget name="key_yellow" position="300,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
   <widget name="key_blue" position="450,383" zPosition="2" size="165,30" font="Regular; 20" halign="center" valign="center" backgroundColor="#41000000" foregroundColor="#00dddddd" transparent="1" />
-  <widget name="serverver" position="10,60" size="275,50" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
-  <widget name="statusserver" position="10,120" size="275,140" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
-  <widget name="statusautostart" position="10,180" size="275,140" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+  <widget name="serverver" position="10,350" size="200,25" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+  <widget name="statusserver" position="10,320" size="200,25" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+  <widget name="statusautostart" position="250,350" size="300,25" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
+    <widget source="menu" render="Listbox" position="15,5" size="570,280" scrollbarMode="showOnDemand" transparent="1">
+    <convert type="TemplatedMultiContent">
+      {"template": [
+        MultiContentEntryText(pos = (15, 5), size = (570, 280), font=0, flags = RT_HALIGN_LEFT, text = 0)
+        ],
+        "fonts": [gFont("Regular", 23)],
+        "itemHeight": 40
+      }
+    </convert>
+  </widget>
 </screen>
