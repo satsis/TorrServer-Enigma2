@@ -9,10 +9,13 @@ from Plugins.Plugin import PluginDescriptor
 from Components.config import config, ConfigOnOff, ConfigText, ConfigSubsection
 from os import environ, system
 from Screens.Console import Console
+from enigma import eServiceReference
 import subprocess
 import gettext
 import os
 import re
+import json
+import urllib
 import urllib2 as urlreq
 
 # Set default configuration
@@ -47,6 +50,17 @@ def get_url(url):
         return r1
     except urlreq.URLError:
         return False
+        
+def post_json(url):
+    try:
+        values = {}
+        data = urllib.urlencode(values)
+        req = urlreq.Request(url, data)
+        response = urlreq.urlopen(req)
+        the_page = response.read()
+        return the_page
+    except urlreq.URLError:
+        return False
 
 class TorrSettings(Screen):
    def __init__(self, session):
@@ -61,6 +75,8 @@ class TorrSettings(Screen):
       self['serverver'] = Label()
       self['statusserver'] = Label()
       self['statusautostart'] = Label()
+      menulist = []
+      self["menu"] = List(menulist)
       self["shortcuts"] = ActionMap(["ShortcutActions", "WizardActions"],
       {
          "cancel": self.cancel,
@@ -69,7 +85,9 @@ class TorrSettings(Screen):
          "green": self.start,
          "yellow": self.stop,
          "blue": self.autostart,
+         "ok": self.action,
          })
+      self.createList()
       if config.plugins.torrserver.autostart.value == True:
           self['statusautostart'].setText(_('Run on starup is ON'))
       else:
@@ -83,8 +101,25 @@ class TorrSettings(Screen):
       r1 = get_url('http://127.0.0.1:8090/')
       self['serverver'].setText(r1)
 
+   def createList(self):
+      menulist = []
+      r2 = post_json('http://127.0.0.1:8090/torrent/list')
+      dictData = json.loads(r2)
+      for item in dictData:
+        torname = str(item['Name'])
+        torplay = str('http://127.0.0.1:8090' + item['Files'][0]['Play'])
+        menulist.append((torname, torplay))
+      self["menu"].setList(menulist)
+
    def cancel(self):
       self.close()
+      
+   def action(self, currentSelect = None):
+      if currentSelect is None:
+         currentSelect = self["menu"].getCurrent()[1]
+         self.hide()
+         sref = eServiceReference(4097, 0, currentSelect)
+         self.session.nav.playService(sref)
 
    def start(self):
       if get_pid("TorrServer-linux-arm7") == False:
