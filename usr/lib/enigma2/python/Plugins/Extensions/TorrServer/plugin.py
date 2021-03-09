@@ -51,14 +51,16 @@ def get_url(url):
     except urlreq.URLError:
         return False
         
-def post_json(url):
+def post_json():
     try:
         values = {}
+        url = 'http://127.0.0.1:8090/torrent/list'
         data = urllib.urlencode(values)
         req = urlreq.Request(url, data)
         response = urlreq.urlopen(req)
         the_page = response.read()
-        return the_page
+        dictData = json.loads(the_page)
+        return dictData
     except urlreq.URLError:
         return False
 
@@ -103,13 +105,13 @@ class TorrSettings(Screen):
 
    def createList(self):
       menulist = []
-      r2 = post_json('http://127.0.0.1:8090/torrent/list')
-      dictData = json.loads(r2)
-      for item in dictData:
-        torname = str(item['Name'])
-        torplay = str('http://127.0.0.1:8090' + item['Files'][0]['Play'])
-        menulist.append((torname, torplay))
-      self["menu"].setList(menulist)
+      dictData = post_json()
+      if dictData != False:
+          for item in dictData:
+            torname = str(item['Name'])
+            torplay = str('http://127.0.0.1:8090' + item['Files'][0]['Play'])
+            menulist.append((torname, torplay))
+          self["menu"].setList(menulist)
 
    def cancel(self):
       self.close()
