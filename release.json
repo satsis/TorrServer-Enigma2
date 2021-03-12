@@ -1,4 +1,4 @@
-{
+[{
  "Name": "TorrServer",
  "Version": "MatriX.95",
  "BuildDate": "28.02.2021",
@@ -6,4 +6,4 @@
   "linux-arm7": "https://github.com/YouROK/TorrServer/releases/download/MatriX.83/TorrServer-linux-arm7",
   "linux-mipsle": "https://github.com/YouROK/TorrServer/releases/download/MatriX.83/TorrServer-linux-mipsle"
  }
-}
+}]
