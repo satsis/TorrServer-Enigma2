@@ -1,5 +1,5 @@
-# TorrServer-armv7ahf-vfp
-TorrServer for ARM armv7ahf-vfp for Enigma2 Receivers Linux
+# TorrServer Enigma2 Plugin
+TorrServer for ARM and mipsel for Enigma2 Receivers Linux
 
 - Server part of TorrServer for ARMv7 version 1.1.77
 - Tested on VU + Ultimo 4K Satellite Receiver
