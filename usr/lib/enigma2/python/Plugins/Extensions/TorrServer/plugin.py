@@ -22,6 +22,8 @@ import urllib2 as urlreq
 # Set default configuration
 config.plugins.torrserver = ConfigSubsection()
 config.plugins.torrserver.autostart = ConfigOnOff(default=False)
+serv_url = 'http://127.0.0.1:8090/'
+torr_path = '/usr/bin/TorrServer'
 
 lang = language.getLanguage()
 environ["LANGUAGE"] = lang[:2]
@@ -46,22 +48,19 @@ def get_pid(name):
     except subprocess.CalledProcessError:
         return False
 
-def get_url(url):
+def get_version():
     try:
+        url = serv_url + 'echo'
         req = urlreq.Request(url)
         html = urlreq.urlopen(req).read()
-        r1 = re.search('<title>(.*)<', html)
-        r1 = r1.group(1)
-        r1 = r1.strip()
+        r1 = html.strip()
         return r1
     except urlreq.URLError:
         return False
         
-def post_json():
+def post_json(url, values = ''):
     try:
-        values = {}
-        url = 'http://127.0.0.1:8090/torrent/list'
-        data = urllib.urlencode(values)
+        data = json.dumps(values)
         req = urlreq.Request(url, data)
         response = urlreq.urlopen(req)
         the_page = response.read()
@@ -69,6 +68,24 @@ def post_json():
         return dictData
     except urlreq.URLError:
         return False
+        
+def install_torr():
+    url = 'https://github.com/YouROK/TorrServer/releases/download/MatriX.83/TorrServer-linux-arm7'
+    try:
+        with open(torr_path,'wb') as f:
+            req = urlreq.Request(url)
+            f.write(urlreq.urlopen(req).read())
+            f.close()
+            subprocess.call(['chmod', '0755', torr_path])
+        return True
+    except urlreq.HTTPError, e:
+        print 'We failed with error code - %s.' % e.code
+        if e.code == 404:
+            os.remove(torr_path)
+            return '404 not found'
+        else:
+            os.remove(torr_path)
+            return e.code
 
 class TorrSettings(Screen):
    def __init__(self, session):
@@ -76,7 +93,7 @@ class TorrSettings(Screen):
         self.skin = f.read()
       Screen.__init__(self, session)
       self.setTitle(_("Plugin for run TorrServer"))
-      self["key_red"] = Label(_("Close"))
+      self["key_red"] = Label(_("Install"))
       self["key_green"] = Label(_("Start"))
       self["key_yellow"] = Label(_("Stop"))
       self["key_blue"] = Label(_("AutoStart"))
@@ -89,7 +106,7 @@ class TorrSettings(Screen):
       {
          "cancel": self.cancel,
          "back": self.cancel,
-         "red": self.cancel,
+         "red": self.install,
          "green": self.start,
          "yellow": self.stop,
          "blue": self.autostart,
@@ -100,22 +117,26 @@ class TorrSettings(Screen):
           self['statusautostart'].setText(_('Run on starup is ON'))
       else:
           self['statusautostart'].setText(_('Run on starup is OFF'))
-      statusserver = get_pid("TorrServer-linux-arm7")
+      statusserver = get_pid("TorrServer")
       self['statusserver'].setText(statusserver)
-      if get_pid("TorrServer-linux-arm7") != False:
+      if get_pid("TorrServer") != False:
           self['statusserver'].setText(_('TorrServer is running'))
       else:
           self['statusserver'].setText(_('TorrServer is down :('))
-      r1 = get_url('http://127.0.0.1:8090/')
-      self['serverver'].setText(r1)
+      version = get_version()
+      self['serverver'].setText(version)
+      if os.path.isfile(torr_path) == False:
+          self['serverver'].setText(_('TorrServer not installed :('))
 
    def createList(self):
       menulist = []
-      dictData = post_json()
+      url = serv_url + 'torrents'
+      values = {'action': "list"}
+      dictData = post_json(url, values)
       if dictData != False:
           for item in dictData:
-            torname = str(item['Name'])
-            torplay = str('http://127.0.0.1:8090' + item['Files'][0]['Play'])
+            torname = str(item['title'])
+            torplay = str(serv_url + 'stream/?link=' + item['hash'] + '&index=1&play')
             menulist.append((torname, torplay))
           self["menu"].setList(menulist)
 
@@ -131,20 +152,21 @@ class TorrSettings(Screen):
          #self.session.nav.playService(sref)
 
    def start(self):
-      if get_pid("TorrServer-linux-arm7") == False:
+      if get_pid("TorrServer") == False:
           fh = open("NUL","w")
-          p = subprocess.Popen(['/usr/bin/TorrServer-linux-arm7'], shell=False, stdout = fh, stderr = fh)
+          os.system('export GODEBUG=madvdontneed=1')
+          p = subprocess.Popen(['/usr/bin/TorrServer'], shell=False, stdout = fh, stderr = fh)
           fh.close()
-          if get_pid("TorrServer-linux-arm7") != False:
+          if get_pid("TorrServer") != False:
               self['statusserver'].setText(_('TorrServer is running'))
           else:
               self['statusserver'].setText(_('TorrServer is down :('))
-          r1 = get_url('http://127.0.0.1:8090/')
-          self['serverver'].setText(r1)
+          version = get_version()
+          self['serverver'].setText(version)
 
    def stop(self):
-      os.system("killall TorrServer-linux-arm7")
-      if get_pid("TorrServer-linux-arm7") != False:
+      os.system("killall TorrServer")
+      if get_pid("TorrServer") != False:
           self['statusserver'].setText(_('TorrServer is running'))
       else:
           self['statusserver'].setText(_('TorrServer is down :('))
@@ -157,11 +179,21 @@ class TorrSettings(Screen):
           config.plugins.torrserver.autostart.value = False
           self['statusautostart'].setText(_('Run on starup is OFF'))
       config.plugins.torrserver.autostart.save()
+      
+   def install(self):
+       if os.path.isfile(torr_path) == False:
+           res = install_torr()
+           if res == True:
+               self["key_red"] = Label(_("Remove"))
+               self['serverver'].setText(_('TorrServer is installed :)'))
+       else:
+           self['serverver'].setText(_('TorrServer is installed :)'))
 
 def autoStart(reason, **kwargs): # starts DURING the Enigma2 booting
-    if config.plugins.torrserver.autostart.value == True and get_pid("TorrServer-linux-arm7") == False:
+    if config.plugins.torrserver.autostart.value == True and get_pid("TorrServer") == False and os.path.isfile(torr_path) == True:
         fh = open("NUL","w")
-        p = subprocess.Popen(['/usr/bin/TorrServer-linux-arm7'], shell=False, stdout = fh, stderr = fh)
+        os.system('export GODEBUG=madvdontneed=1')
+        p = subprocess.Popen(['/usr/bin/TorrServer'], shell=False, stdout = fh, stderr = fh)
         fh.close()
         #with open("/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/log.txt","a") as f:
             #f.write("reason = %s, config.plugins.torrserver.autostart.value = %s \n" % (reason, config.plugins.torrserver.autostart.value))
