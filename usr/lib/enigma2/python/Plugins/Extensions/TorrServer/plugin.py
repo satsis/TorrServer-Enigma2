@@ -18,12 +18,14 @@ import re
 import json
 import urllib
 import urllib2 as urlreq
+import time
 
 # Set default configuration
 config.plugins.torrserver = ConfigSubsection()
 config.plugins.torrserver.autostart = ConfigOnOff(default=False)
 serv_url = 'http://127.0.0.1:8090/'
 torr_path = '/usr/bin/TorrServer'
+repolist = 'https://raw.githubusercontent.com/satsis/TorrServer-armv7ahf-vfp/main/release.json'
 
 lang = language.getLanguage()
 environ["LANGUAGE"] = lang[:2]
@@ -69,8 +71,29 @@ def post_json(url, values = ''):
     except urlreq.URLError:
         return False
         
+def get_url(url, values = ''):
+    try:
+        data = urllib.urlencode(values)
+        if values != '':
+            req = urlreq.Request(url + "?" + data)
+        else:
+            req = urlreq.Request(url)
+        resp = urlreq.urlopen(req)
+        return resp.read()
+    except IOError as e:
+        print "Error: ", e
+        return False
+        
 def install_torr():
-    url = 'https://github.com/YouROK/TorrServer/releases/download/MatriX.83/TorrServer-linux-arm7'
+    arch = subprocess.check_output('uname -m; exit 0', shell=True)
+    arch = arch.strip()
+    repo_json = json.loads(get_url(repolist))
+    if repo_json != False:
+        for item in repo_json:
+            if arch == 'armv7l':
+                url = str(item['Links']['linux-arm7'])
+            if arch == 'mips':
+                url = str(item['Links']['linux-mipsle'])
     try:
         with open(torr_path,'wb') as f:
             req = urlreq.Request(url)
@@ -139,6 +162,7 @@ class TorrSettings(Screen):
             torplay = str(serv_url + 'stream/?link=' + item['hash'] + '&index=1&play')
             menulist.append((torname, torplay))
           self["menu"].setList(menulist)
+      return True
 
    def cancel(self):
       self.close()
@@ -162,10 +186,14 @@ class TorrSettings(Screen):
           else:
               self['statusserver'].setText(_('TorrServer is down :('))
           version = get_version()
+          time.sleep(0.5)
           self['serverver'].setText(version)
+          menulist = []
+          self.createList()
 
    def stop(self):
       os.system("killall TorrServer")
+      time.sleep(0.5)
       if get_pid("TorrServer") != False:
           self['statusserver'].setText(_('TorrServer is running'))
       else:
@@ -184,7 +212,7 @@ class TorrSettings(Screen):
        if os.path.isfile(torr_path) == False:
            res = install_torr()
            if res == True:
-               self["key_red"] = Label(_("Remove"))
+               self["key_red"].setText(_("Remove"))
                self['serverver'].setText(_('TorrServer is installed :)'))
        else:
            self['serverver'].setText(_('TorrServer is installed :)'))
