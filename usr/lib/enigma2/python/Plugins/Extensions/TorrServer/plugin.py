@@ -19,6 +19,7 @@ import json
 import urllib
 import urllib2 as urlreq
 import time
+import ssl
 
 # Set default configuration
 config.plugins.torrserver = ConfigSubsection()
@@ -78,27 +79,34 @@ def get_url(url, values = ''):
             req = urlreq.Request(url + "?" + data)
         else:
             req = urlreq.Request(url)
-        resp = urlreq.urlopen(req)
+        context = ssl._create_unverified_context()
+        resp = urlreq.urlopen(req, context=context)
         return resp.read()
-    except IOError as e:
-        print "Error: ", e
+    except urlreq.URLError:
+        self['serverver'].setText(urlreq.URLError)
         return False
         
 def install_torr():
     arch = subprocess.check_output('uname -m; exit 0', shell=True)
     arch = arch.strip()
-    repo_json = json.loads(get_url(repolist))
+    repo_json = get_url(repolist)
+    repo_json = json.loads(repo_json)
     if repo_json != False:
         for item in repo_json:
             if arch == 'armv7l':
                 url = str(item['Links']['linux-arm7'])
-            if arch == 'mips':
+            elif (arch == 'mips'):
                 url = str(item['Links']['linux-mipsle'])
+            else:
+                self['serverver'].setText(_('No version TorrServer!'))
+                return False
     try:
         with open(torr_path,'wb') as f:
             req = urlreq.Request(url)
-            f.write(urlreq.urlopen(req).read())
+            context = ssl._create_unverified_context()
+            f.write(urlreq.urlopen(req, context=context).read())
             f.close()
+            time.sleep(0.5)
             subprocess.call(['chmod', '0755', torr_path])
         return True
     except urlreq.HTTPError, e:
@@ -109,6 +117,9 @@ def install_torr():
         else:
             os.remove(torr_path)
             return e.code
+    except urlreq.URLError:
+        self['serverver'].setText(urlreq.URLError)
+        return False
 
 class TorrSettings(Screen):
    def __init__(self, session):
