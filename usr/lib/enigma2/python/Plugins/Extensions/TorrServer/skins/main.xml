@@ -1,5 +1,4 @@
 <screen name="TorrSettings" position="center,center" size="600,450" title="Backup settings for current skin">
-  <widget name="text" position="69,339" size="500,30" foregroundColor="#00009a00" font="Regular;22" halign="right" transparent="1" />
   <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_red.png" position="5,380" size="140,40" transparent="1" alphatest="on" />
   <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_green.png" position="155,380" size="140,40" transparent="1" alphatest="on" />
   <ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key_yellow.png" position="305,380" size="140,40" transparent="1" alphatest="on" />

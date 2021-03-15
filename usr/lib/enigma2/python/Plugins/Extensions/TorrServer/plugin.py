@@ -200,7 +200,7 @@ class TorrSettings(Screen):
 		return self
 
 	def cancel(self):
-		#rt.stop()
+		self.onClose.append(self.rt.stop)
 		self.close()
 
 	def action(self, currentSelect = None):
@@ -230,7 +230,7 @@ class TorrSettings(Screen):
 	def stop(self):
 		os.system("killall TorrServer")
 		time.sleep(0.5)
-		#rt.stop()
+		self.rt.stop()
 		if get_pid("TorrServer") != False:
 			self['statusserver'].setText(_('TorrServer is running'))
 		else:
