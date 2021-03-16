@@ -128,8 +128,7 @@ class TorrSettings(Screen):
 		self["key_red"] = Label(_("Install"))
 		self["key_green"] = Label(_("Start"))
 		self["key_yellow"] = Label(_("Info"))
-		self["key_blue"] = Label(_("Autostart is"))
-		self['key_blue'].setText(_('Autostart is %s') % _('ON') if config.plugins.torrserver.autostart.value else _('OFF'))
+		self["key_blue"] = Label(_())
 		self["statusbar"] = Label()
 		self['statusserver'] = Label()
 		menulist = []
@@ -208,7 +207,7 @@ class TorrSettings(Screen):
 
 	def start_stop(self):
 		if get_pid("TorrServer") == False:
-			fh = open("NUL","w")
+			fh = open(os.devnull, 'wb')
 			os.system('export GODEBUG=madvdontneed=1')
 			p = subprocess.Popen(['/usr/bin/TorrServer'], shell=False, stdout = fh, stderr = fh)
 			fh.close()		
@@ -227,7 +226,7 @@ class TorrSettings(Screen):
 		self.onClose.append(self.timer.stop)
 
 	def info(self):
-		self['statusbar'].setText(_('TorrServer is %s') % _('running') if get_pid('TorrServer') else _('down :('))
+		self['statusbar'].setText(_('TorrServer is %s') % (_('running') if get_pid('TorrServer') else _('down :(')))
 
 	def autostart(self):
 		if config.plugins.torrserver.autostart.value == False:
