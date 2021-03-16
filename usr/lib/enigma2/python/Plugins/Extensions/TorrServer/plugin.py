@@ -128,7 +128,8 @@ class TorrSettings(Screen):
 		self["key_red"] = Label(_("Install"))
 		self["key_green"] = Label(_("Start"))
 		self["key_yellow"] = Label(_("Info"))
-		self["key_blue"] = Label(_())
+		self["key_blue"] = Label()
+		self['key_blue'].setText(_('Autostart is %s') % (_('ON') if config.plugins.torrserver.autostart.value else _('OFF')))
 		self["statusbar"] = Label()
 		self['statusserver'] = Label()
 		menulist = []
