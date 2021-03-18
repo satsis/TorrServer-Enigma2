@@ -1,7 +1,6 @@
 <screen name="TorrSettings" position="135,135" size="1650,855" title="TorrServer Enigma2">
 	<eLabel backgroundColor="#ffffff" position="0,0" size="1650,3" />
 	<widget font="Regular;33" foregroundColor="#ffff00" name="title" position="30,30" size="500,35" transparent="1" valign="center" />
-	<widget name="menu" position="170,100" scrollbarMode="showOnDemand" size="920,130" zPosition="3" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/button1080x25.png" />
 	<widget font="Regular;27" foregroundColor="#4f7942" name="statusbar" position="15,735" size="1620,30" transparent="1" />
 	<eLabel backgroundColor="#ffffff" position="0,780" size="1650,3" />
 	<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key-red.png" position="30,810" size="20,20" zPosition="1" />
@@ -14,7 +13,6 @@
 	<widget backgroundColor="#1f771f" font="Regular;30" foregroundColor="#00389416" halign="left" name="key_green" position="480,792" size="375,57" transparent="1" valign="center" zPosition="2" />
 	<widget backgroundColor="#a08500" font="Regular;30" foregroundColor="#00bab329" halign="left" name="key_yellow" position="875,792" size="375,57" transparent="1" valign="center" zPosition="2" />
 	<widget backgroundColor="#18188b" font="Regular;30" foregroundColor="#006565ff" halign="left" name="key_blue" position="1270,792" size="375,57" transparent="1" valign="center" zPosition="2" />
-	<widget name="statusserver" position="10,320" size="250,22" font="Regular;22" halign="left" valign="left" transparent="0" zPosition="5"/>
 	<widget name="poster" position="150,90" size="300,450" zPosition="2" alphatest="blend"/>
 	<widget font="Regular;27" foregroundColor="#ffffff" name="original_title" position="30,540" size="500,30" transparent="1" valign="center" />
 	<widget font="Regular;27" foregroundColor="#ffffff" name="vote_average" position="30,570" size="300,30" transparent="1" valign="center" />
