@@ -179,7 +179,6 @@ class TorrSettings(Screen):
 		self["key_blue"] = Label()
 		self['key_blue'].setText(_('Autostart is %s') % (_('ON') if config.plugins.torrserver.autostart.value else _('OFF')))
 		self["statusbar"] = Label()
-		self['statusserver'] = Label()
 		self["poster"] = Pixmap()
 		menulist = []
 		self["menu"] = List(menulist)
@@ -440,6 +439,7 @@ class TorrSettings(Screen):
 			yr = [ _y for _y in re.findall(r'\d{4}', sd) if '1930' <= _y <= '%s' % gmtime().tm_year ]
 			parts = sd.split(yr[0], -1)
 			res = parts[0]
+			if DEBUG: write_log('res: %s' % res)
 		except:
 			res = sd
 
@@ -447,6 +447,7 @@ class TorrSettings(Screen):
 			dig = [ _y for _y in re.findall(r'[\\/]', res) ]
 			parts = sd.split(dig[0], -1)
 			res2 = parts[0]
+			if DEBUG: write_log('res2: %s' % res2)
 		except:
 			res2 = res
 			
@@ -454,6 +455,7 @@ class TorrSettings(Screen):
 			dig = [ _y for _y in re.findall(r'\d{4}p', res2) ]
 			parts = sd.split(dig[0], -1)
 			self.evntNm = parts[0]
+			if DEBUG: write_log('res3: %s' % self.evntNm)
 		except:
 			self.evntNm = res2
 			
