@@ -167,7 +167,7 @@ class TorrSettings(Screen):
 		self.skin = self.setSkin()
 		print self.skin
 		Screen.__init__(self, session)
-		self.setTitle(_("Plugin TorrServer Enigma2 version %s" % pluginversion()))
+		self.setTitle(_("Plugin TorrServer Enigma2 version %s") % pluginversion())
 		self["title"] = Label()
 		self["original_title"] = Label()
 		self["overview"] = Label()
@@ -391,7 +391,6 @@ class TorrSettings(Screen):
 		self['poster'].instance.setPixmap(None)
 		self['poster'].hide()
 		jpg_file = str(self.tempfile)
-		#jpg_file = '/tmp/xn0z7kZ4DLOoNeDNrvCrsDAvm8y.jpg'
 		size = self["poster"].instance.size()
 		if DEBUG: write_log('size: %s' % size.height())
 		scale = AVSwitch().getFramebufferScale()
