@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-06 16:52+0200\n"
-"PO-Revision-Date: 2021-03-06 16:59+0200\n"
+"POT-Creation-Date: 2021-03-19 09:46+0200\n"
+"PO-Revision-Date: 2021-03-19 09:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: uk_UA\n"
@@ -15,42 +15,84 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Poedit-SearchPath-0: plugin.py\n"
 
-#: plugin.py:43 plugin.py:115
-msgid "Plugin for run TorrServer"
-msgstr "Плагін для запуску TorrServer"
+#: plugin.py:142
+msgid "No version TorrServer!"
+msgstr "Немає версії TorrServer!"
 
-#: plugin.py:44
-msgid "Close"
-msgstr "Закрити"
+#: plugin.py:170
+#, python-format
+msgid "Plugin TorrServer Enigma2 version %s"
+msgstr "Плагін TorrServer Enigma2 версія %s"
 
-#: plugin.py:45
+#: plugin.py:176 plugin.py:246
+msgid "Install"
+msgstr "Встановити"
+
+#: plugin.py:177 plugin.py:255
 msgid "Start"
-msgstr "Запустити"
+msgstr "Почніть"
 
-#: plugin.py:46
+#: plugin.py:178
+msgid "Info"
+msgstr "Інформація"
+
+#: plugin.py:180
+#, python-format
+msgid "Autostart is %s"
+msgstr "Автозапуск %s"
+
+#: plugin.py:180 plugin.py:301 plugin.py:302
+msgid "ON"
+msgstr "УВ"
+
+#: plugin.py:180 plugin.py:305 plugin.py:306
+msgid "OFF"
+msgstr "ВИМ"
+
+#: plugin.py:245 plugin.py:249 plugin.py:253 plugin.py:314 plugin.py:316
+msgid "TorrServer is"
+msgstr "TorrServer"
+
+#: plugin.py:245
+msgid "not installed :("
+msgstr "не встановлено :("
+
+#: plugin.py:249
+msgid "running"
+msgstr "працює"
+
+#: plugin.py:249
+msgid "version"
+msgstr "версія"
+
+#: plugin.py:250 plugin.py:254 plugin.py:313
+msgid "Check updates"
+msgstr "Перевірити оновлення"
+
+#: plugin.py:251
 msgid "Stop"
 msgstr "Зупинити"
 
-#: plugin.py:47
-msgid "AutoStart"
+#: plugin.py:253
+msgid "down :("
+msgstr "вимкнений :("
+
+#: plugin.py:301 plugin.py:305
+msgid "Run on starup is"
+msgstr "Запуск під час старту"
+
+#: plugin.py:302 plugin.py:306
+msgid "Autostart is"
 msgstr "Автозапуск"
 
-#: plugin.py:60 plugin.py:93
-msgid "Run on starup is ON"
-msgstr "Запуск при старті включений"
+#: plugin.py:314 plugin.py:316
+msgid "installed :)"
+msgstr "встановлений :)"
 
-#: plugin.py:62 plugin.py:96
-msgid "Run on starup is OFF"
-msgstr "Запуск при старті вимкнений"
-
-#: plugin.py:66 plugin.py:79 plugin.py:86
-msgid "TorrServer is running"
-msgstr "TorrServer працює"
-
-#: plugin.py:68 plugin.py:81 plugin.py:88
-msgid "TorrServer is down :("
-msgstr "TorrServer не працює :("
-
-#: plugin.py:115
+#: plugin.py:478
 msgid "TorrServer runner"
-msgstr "Вимикач TorrServer"
+msgstr "Бігун TorrServer"
+
+#: plugin.py:478
+msgid "Plugin for run TorrServer"
+msgstr "Плагін для запуску TorrServer"
