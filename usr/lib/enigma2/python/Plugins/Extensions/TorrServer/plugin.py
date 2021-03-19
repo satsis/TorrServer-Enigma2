@@ -48,7 +48,7 @@ REGEX = re.compile(
 		r'(т|Т)/с|'
 		r'(ч|Ч)асть|'
 		r'(\s\-(.*?).*)|'
-		r'[\\/\(]|', re.DOTALL)
+		r'[\\/\(_]|', re.DOTALL)
 		
 
 HEADERS = {
@@ -206,6 +206,7 @@ class TorrSettings(Screen):
 		self.onClose.append(self.timer.stop)
 		
 	def firstposter(self):
+		if DEBUG: write_log('first: %s' % get_pid("TorrServer"))
 		if get_pid("TorrServer"):
 			self.evntNm = str(self["menu"].getCurrent()[0])
 			if DEBUG: write_log('first: %s' % self.evntNm)
