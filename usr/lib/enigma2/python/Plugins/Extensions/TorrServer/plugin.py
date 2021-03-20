@@ -26,7 +26,7 @@ config.plugins.torrserver.autostart = ConfigOnOff(default=False)
 serv_url = 'http://127.0.0.1:8090/'
 torr_path = '/usr/bin/TorrServer'
 repolist = 'https://raw.githubusercontent.com/satsis/TorrServer-armv7ahf-vfp/main/release.json'
-version = '0.5'
+version = '0.5.1'
 DEBUG = True
 temp_dir = tempfile.gettempdir()
 log_file = os.path.join(temp_dir, 'poster.log')
@@ -206,10 +206,10 @@ class TorrSettings(Screen):
 		self.onClose.append(self.timer.stop)
 		
 	def firstposter(self):
-		if DEBUG: write_log('first: %s' % get_pid("TorrServer"))
-		if get_pid("TorrServer"):
+		if DEBUG: write_log('first: %s' % self.menulist)
+		if get_pid("TorrServer") and self.menulist:
 			self.evntNm = str(self["menu"].getCurrent()[0])
-			if DEBUG: write_log('first: %s' % self.evntNm)
+			if DEBUG: write_log('first yes: %s' % self.evntNm)
 			self.showPoster()
 
 	def setSkin(self):
@@ -228,7 +228,7 @@ class TorrSettings(Screen):
 				return skin
 
 	def createList(self):
-		menulist = []
+		self.menulist = []
 		url = serv_url + 'torrents'
 		values = {'action': "list"}
 		dictData = post_json(url, values)
@@ -238,8 +238,8 @@ class TorrSettings(Screen):
 				if not torname:
 					torname = str(item['name'])
 				torplay = str(serv_url + 'stream/?link=' + item['hash'] + '&index=1&play')
-				menulist.append((torname, torplay))
-			self["menu"].updateList(menulist)
+				self.menulist.append((torname, torplay))
+			self["menu"].updateList(self.menulist)
 	
 	def get_status(self):
 		if os.path.isfile(torr_path) == False:
@@ -259,7 +259,7 @@ class TorrSettings(Screen):
 		self.close()
 
 	def action(self, currentSelect = None):
-		if currentSelect is None:
+		if currentSelect is None and self.menulist:
 			currentSelect = str(self["menu"].getCurrent()[1])
 			self.hide()
 			sref = eServiceReference(4097, 0, currentSelect)
@@ -267,7 +267,7 @@ class TorrSettings(Screen):
 			#self.session.nav.playService(sref)
 	
 	def cross(self):
-		if get_pid("TorrServer"):
+		if get_pid("TorrServer") and self.menulist:
 			self.evntNm = str(self["menu"].getCurrent()[0])
 			if DEBUG: write_log('cross menu: %s' % self.evntNm)
 			self.showPoster()
