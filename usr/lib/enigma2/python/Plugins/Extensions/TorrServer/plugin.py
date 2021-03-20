@@ -18,6 +18,7 @@ from time import gmtime
 from urllib import quote, urlencode
 from urllib2 import urlopen, Request
 from Components.AVSwitch import AVSwitch
+from Components.ProgressBar import ProgressBar
 import subprocess, gettext, os, re, json, urllib, urllib2 as urlreq, time, ssl, tempfile
 
 # Set default configuration
@@ -25,7 +26,7 @@ config.plugins.torrserver = ConfigSubsection()
 config.plugins.torrserver.autostart = ConfigOnOff(default=False)
 serv_url = 'http://127.0.0.1:8090/'
 torr_path = '/usr/bin/TorrServer'
-repolist = 'https://raw.githubusercontent.com/satsis/TorrServer-armv7ahf-vfp/main/release.json'
+repolist = 'https://releases.yourok.ru/torr/server_release.json'
 version = '0.5.1'
 DEBUG = True
 temp_dir = tempfile.gettempdir()
@@ -94,13 +95,11 @@ def get_pid(name):
 		
 def get_version():
 	try:
-		url = serv_url + 'echo'
-		req = urlreq.Request(url)
-		html = urlreq.urlopen(req).read()
-		r1 = html.strip()
-		return r1
-	except urlreq.URLError:
-		return False
+		ver = subprocess.check_output(torr_path + ' --version', shell=True)
+		match = re.match(r'TorrServer (.*)', ver)
+		return str(match.group(1).strip())
+	except subprocess.CalledProcessError:
+		return 'no version'
 
 def post_json(url, values = ''):
 	try:
@@ -127,20 +126,7 @@ def get_url(url, values = ''):
 		self['statusbar'].setText(urlreq.URLError)
 		return False
 
-def install_torr():
-	arch = subprocess.check_output('uname -m; exit 0', shell=True)
-	arch = arch.strip()
-	repo_json = get_url(repolist)
-	repo_json = json.loads(repo_json)
-	if repo_json != False:
-		for item in repo_json:
-			if arch == 'armv7l':
-				url = str(item['Links']['linux-arm7'])
-			elif (arch == 'mips'):
-				url = str(item['Links']['linux-mipsle'])
-			else:
-				self['statusbar'].setText(_('No version TorrServer!'))
-				return False
+def download_torr(url):
 	try:
 		with open(torr_path,'wb') as f:
 			req = urlreq.Request(url)
@@ -161,7 +147,7 @@ def install_torr():
 	except urlreq.URLError:
 		self['statusbar'].setText(urlreq.URLError)
 		return False
-
+		
 class TorrSettings(Screen):
 	def __init__(self, session):
 		self.skin = self.setSkin()
@@ -172,7 +158,6 @@ class TorrSettings(Screen):
 		self["original_title"] = Label()
 		self["overview"] = Label()
 		self["vote_average"] = Label()
-		self["vote_count"] = Label()
 		self["key_red"] = Label(_("Install"))
 		self["key_green"] = Label(_("Start"))
 		self["key_yellow"] = Label(_("Info"))
@@ -180,6 +165,11 @@ class TorrSettings(Screen):
 		self['key_blue'].setText(_('Autostart is %s') % (_('ON') if config.plugins.torrserver.autostart.value else _('OFF')))
 		self["statusbar"] = Label()
 		self["poster"] = Pixmap()
+		self["stars"] = ProgressBar()
+		self["starsbg"] = Pixmap()
+		self["stars"].hide()
+		self["starsbg"].hide()
+		self.ratingstars = 0
 		menulist = []
 		self["menu"] = List(menulist)
 		self["shortcuts"] = ActionMap(["ShortcutActions", "WizardActions", "DirectionActions"],
@@ -236,7 +226,8 @@ class TorrSettings(Screen):
 			for item in dictData:
 				torname = str(item.get('title'))
 				if not torname:
-					torname = str(item['name'])
+					torname = str(item.get('name'))
+					if torname == 'None': torname = ''
 				torplay = str(serv_url + 'stream/?link=' + item['hash'] + '&index=1&play')
 				self.menulist.append((torname, torplay))
 			self["menu"].updateList(self.menulist)
@@ -306,17 +297,45 @@ class TorrSettings(Screen):
 			self['statusbar'].setText(_("Run on starup is") + " " + _("OFF"))
 			self["key_blue"].setText(_("Autostart is") + " " + _("OFF"))
 		config.plugins.torrserver.autostart.save()
-
+			
 	def install_update(self):
+		arch = subprocess.check_output('uname -m; exit 0', shell=True)
+		arch = arch.strip()
+		repo_json = get_url(repolist)
+		repo_json = '[' + repo_json + ']'
+		repo_json = json.loads(repo_json)
+		if repo_json != False:
+			for item in repo_json:
+				new_ver = str(item['version'])
+				if DEBUG: write_log('version: %s' % version)
+				if arch == 'armv7l':
+					url = str(item['links']['linux-arm7'])
+				elif (arch == 'mips'):
+					url = str(item['links']['linux-mipsle'])
+				else:
+					self['statusbar'].setText(_('No version TorrServer!'))
+					return False
 		if os.path.isfile(torr_path) == False:
-			res = install_torr()
-			if res == True:
-				self["key_red"].setText(_("Check updates"))
-				self['statusbar'].setText(_('TorrServer is') + " " + _('installed :)'))
+			self['statusbar'].setText(_('TorrServer is') + " " + _('try install :)'))
+			if DEBUG: write_log('no server - try download: %s' % version)
+			res = download_torr(url)
+		elif get_version() != new_ver:
+			self['statusbar'].setText(_('TorrServer is') + " " + _('try update :)'))
+			self.start_stop()
+			if DEBUG: write_log('find new ver - try download: %s' % version)
+			res = download_torr(url)
+			self.start_stop()
 		else:
+			if DEBUG: write_log('no new ver - go home: %s' % version)
+			self['statusbar'].setText(_('No update TorrServer found'))
+			res = False
+		if res == True:
+			self["key_red"].setText(_("Check updates"))
 			self['statusbar'].setText(_('TorrServer is') + " " + _('installed :)'))
 
 	def getPoster(self):
+		if self.evntNm == '':
+			return ''
 		self.year = self.filterSearch()
 		self.filtername()
 		self.evntNm = REGEX.sub('', self.evntNm).strip()
@@ -371,22 +390,33 @@ class TorrSettings(Screen):
 					self['original_title'].setText(str(data['results'][0]['original_title']))
 				else:
 					self['original_title'].setText(str(data['results'][0]['original_name']))
+								
+				Ratingtext = _("User Rating") + ": %s /10" % str(data['results'][0]['vote_average']) + ' (' + _("Votes") + ": " + str(data['results'][0]['vote_count']) + ')'
+				if DEBUG: write_log('Ratingtext: %s' % Ratingtext)
+				self.ratingstars = int(10*(float(str(data['results'][0]['vote_average']))))
+				self["starsbg"].show()
+				if DEBUG: write_log('self.ratingstars: %s' % self.ratingstars)
+				self["stars"].setValue(self.ratingstars)
+				self["stars"].show()
 				self['overview'].setText(str(data['results'][0]['overview']))
-				self['vote_average'].setText(str(data['results'][0]['vote_average']))
-				self['vote_count'].setText(str(data['results'][0]['vote_count']))
+				self["vote_average"].setText(Ratingtext)				
+				self["overview"].setText(str(data['results'][0]['overview']))
 			else:
 				self.tempfile = '/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/poster_none.png'
 				self['title'].setText(self.evntNm)
 				self['original_title'].setText('')
 				self['overview'].setText('')
 				self['vote_average'].setText('')
-				self['vote_count'].setText('')
+				self["starsbg"].hide()
+				self["stars"].hide()
 
 		except Exception as e:
 			if DEBUG:
 				write_log('An error occurred while processing JSON request: %s' % repr(e))
 
 	def showPoster(self):
+		if self.evntNm == '':
+			return ''
 		self.getPoster()
 		self.picload = ePicLoad()
 		self['poster'].instance.setPixmap(None)
