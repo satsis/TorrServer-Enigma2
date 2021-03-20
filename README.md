@@ -11,4 +11,4 @@ The plugin can:
 * Stop server
 * Run at system startup
 * Show version TorrServer
-![TorrServer-armv7ahf-vfp](https://raw.githubusercontent.com/satsis/TorrServer-Enigma2/main/TorrServer-armv7ahf-vfp%20(3).jpg)
+![TorrServer-armv7ahf-vfp](https://raw.githubusercontent.com/satsis/TorrServer-Enigma2/main/TorrServer-armv7ahf-vfp%20(4).jpg)
