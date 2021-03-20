@@ -1,0 +1,32 @@
+<screen name="TorrSettings" position="90,90" size="1100,570">
+	<eLabel backgroundColor="#ffffff" position="0,0" size="1100,2" />
+	<widget font="Regular;22" foregroundColor="#ffff00" name="title" position="20,20" size="335,24" transparent="1" valign="center" />
+	<widget font="Regular;18" foregroundColor="#4f7942" name="statusbar" position="10,490" size="1080,20" transparent="1" />
+	<eLabel backgroundColor="#ffffff" position="0,520" size="1100,2" /> 
+	<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key-red.png" position="15,540" size="20,20" zPosition="1" />
+	<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key-green.png" position="285,540" size="20,20" zPosition="1" />
+	<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key-yellow.png" position="555,540" size="20,20" zPosition="1" />
+	<ePixmap alphatest="on" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/key-blue.png" position="825,540" size="20,20" zPosition="1" />
+	<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1048,525" zPosition="1" size="35,25" alphatest="on" />
+	<ePixmap pixmap="skin_default/buttons/key_info.png" position="1048,550" zPosition="1" size="35,25" alphatest="on" />
+	<widget backgroundColor="#9f1313" font="Regular;20" foregroundColor="#00ff2525" halign="left" name="key_red" position="40,530" size="400,38" transparent="1" valign="center" zPosition="2" />
+	<widget backgroundColor="#1f771f" font="Regular;20" foregroundColor="#00389416" halign="left" name="key_green" position="310,530" size="375,38" transparent="1" valign="center" zPosition="2" />
+	<widget backgroundColor="#a08500" font="Regular;20" foregroundColor="#00bab329" halign="left" name="key_yellow" position="580,530" size="375,38" transparent="1" valign="center" zPosition="2" />
+	<widget backgroundColor="#18188b" font="Regular;20" foregroundColor="#006565ff" halign="left" name="key_blue" position="850,530" size="375,38" transparent="1" valign="center" zPosition="2" /> 
+	<widget name="poster" position="80,60" size="200,300" zPosition="2" alphatest="blend"/>
+	<widget font="Regular;18" foregroundColor="#ffffff" name="original_title" position="20,360" size="335,20" transparent="1" valign="center" />
+	<widget font="Regular;18" foregroundColor="#ffffff" name="vote_average" position="20,400" size="335,20" transparent="1" valign="center" />
+	<widget name="starsbg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/starsbar_empty.png" halign="center" position="20,380" size="210,21" alphatest="blend"  transparent="1" zPosition="2" />
+	<widget name="stars" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/starsbar_filled.png" halign="center" position="20,380"  size="210,21" transparent="1" zPosition="3" />
+	<widget font="Regular;18" foregroundColor="#ffffff" name="overview" position="20,420" size="1030,60" transparent="1" valign="center" />   
+    <widget source="menu" render="Listbox" position="350,17" size="700,385" scrollbarMode="showOnDemand" transparent="1">
+		<convert type="TemplatedMultiContent">
+		  {"template": [
+			MultiContentEntryText(pos = (10, 4), size = (700, 30), font=0, flags = RT_HALIGN_LEFT, text = 0)
+			],
+			"fonts": [gFont("Regular", 20)],
+			"itemHeight": 30
+		  }
+		</convert>
+	</widget>
+</screen> 
