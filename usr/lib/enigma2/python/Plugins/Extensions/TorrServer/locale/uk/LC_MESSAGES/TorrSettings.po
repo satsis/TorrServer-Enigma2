@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-19 09:46+0200\n"
-"PO-Revision-Date: 2021-03-19 09:52+0200\n"
+"POT-Creation-Date: 2021-03-20 16:49+0200\n"
+"PO-Revision-Date: 2021-03-20 16:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: uk_UA\n"
@@ -10,89 +10,113 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: .\n"
+"X-Poedit-Basepath: ../../../../../../../../../..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Poedit-SearchPath-0: plugin.py\n"
 
-#: plugin.py:142
-msgid "No version TorrServer!"
-msgstr "Немає версії TorrServer!"
-
-#: plugin.py:170
+#: plugin.py:156
 #, python-format
 msgid "Plugin TorrServer Enigma2 version %s"
 msgstr "Плагін TorrServer Enigma2 версія %s"
 
-#: plugin.py:176 plugin.py:246
+#: plugin.py:161 plugin.py:238
 msgid "Install"
 msgstr "Встановити"
 
-#: plugin.py:177 plugin.py:255
+#: plugin.py:162 plugin.py:247
 msgid "Start"
 msgstr "Почніть"
 
-#: plugin.py:178
+#: plugin.py:163
 msgid "Info"
 msgstr "Інформація"
 
-#: plugin.py:180
+#: plugin.py:165
 #, python-format
 msgid "Autostart is %s"
 msgstr "Автозапуск %s"
 
-#: plugin.py:180 plugin.py:301 plugin.py:302
+#: plugin.py:165 plugin.py:293 plugin.py:294
 msgid "ON"
 msgstr "УВ"
 
-#: plugin.py:180 plugin.py:305 plugin.py:306
+#: plugin.py:165 plugin.py:297 plugin.py:298
 msgid "OFF"
 msgstr "ВИМ"
 
-#: plugin.py:245 plugin.py:249 plugin.py:253 plugin.py:314 plugin.py:316
+#: plugin.py:237 plugin.py:241 plugin.py:245 plugin.py:319 plugin.py:323
+#: plugin.py:334
 msgid "TorrServer is"
 msgstr "TorrServer"
 
-#: plugin.py:245
+#: plugin.py:237
 msgid "not installed :("
 msgstr "не встановлено :("
 
-#: plugin.py:249
+#: plugin.py:241
 msgid "running"
 msgstr "працює"
 
-#: plugin.py:249
+#: plugin.py:241
 msgid "version"
 msgstr "версія"
 
-#: plugin.py:250 plugin.py:254 plugin.py:313
+#: plugin.py:242 plugin.py:246 plugin.py:333
 msgid "Check updates"
 msgstr "Перевірити оновлення"
 
-#: plugin.py:251
+#: plugin.py:243
 msgid "Stop"
 msgstr "Зупинити"
 
-#: plugin.py:253
+#: plugin.py:245
 msgid "down :("
 msgstr "вимкнений :("
 
-#: plugin.py:301 plugin.py:305
+#: plugin.py:293 plugin.py:297
 msgid "Run on starup is"
 msgstr "Запуск під час старту"
 
-#: plugin.py:302 plugin.py:306
+#: plugin.py:294 plugin.py:298
 msgid "Autostart is"
 msgstr "Автозапуск"
 
-#: plugin.py:314 plugin.py:316
+#: plugin.py:316
+msgid "No version TorrServer!"
+msgstr "Немає версії TorrServer!"
+
+#: plugin.py:319
+msgid "try install :)"
+msgstr "спроба встановити :)"
+
+#: plugin.py:323
+msgid "try update :)"
+msgstr "спроба оновити :)"
+
+#: plugin.py:330
+msgid "No update TorrServer found"
+msgstr "Немає версії TorrServer"
+
+#: plugin.py:334
 msgid "installed :)"
 msgstr "встановлений :)"
 
-#: plugin.py:478
+#: plugin.py:394
+msgid "User Rating"
+msgstr "Рейтинг"
+
+#: plugin.py:394
+msgid "Votes"
+msgstr "Голоси"
+
+#: plugin.py:509
 msgid "TorrServer runner"
 msgstr "Бігун TorrServer"
 
-#: plugin.py:478
+#: plugin.py:509
 msgid "Plugin for run TorrServer"
 msgstr "Плагін для запуску TorrServer"
+
+#~ msgid " times"
+#~ msgstr " раз"
