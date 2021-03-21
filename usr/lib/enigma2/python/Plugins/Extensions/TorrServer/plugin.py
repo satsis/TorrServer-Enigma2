@@ -19,7 +19,7 @@ from urllib import quote, urlencode
 from urllib2 import urlopen, Request
 from Components.AVSwitch import AVSwitch
 from Components.ProgressBar import ProgressBar
-import subprocess, gettext, os, re, json, urllib, urllib2 as urlreq, time, ssl, tempfile
+import subprocess, gettext, os, re, json, urllib, urllib2 as urlreq, time, ssl, tempfile, traceback
 
 # Set default configuration
 config.plugins.torrserver = ConfigSubsection()
@@ -27,7 +27,7 @@ config.plugins.torrserver.autostart = ConfigOnOff(default=False)
 serv_url = 'http://127.0.0.1:8090/'
 torr_path = '/usr/bin/TorrServer'
 repolist = 'https://releases.yourok.ru/torr/server_release.json'
-version = '0.5.1'
+version = '0.5.4'
 DEBUG = True
 temp_dir = tempfile.gettempdir()
 log_file = os.path.join(temp_dir, 'poster.log')
@@ -196,7 +196,7 @@ class TorrSettings(Screen):
 		self.onClose.append(self.timer.stop)
 		
 	def firstposter(self):
-		if DEBUG: write_log('first: %s' % self.menulist)
+		#if DEBUG: write_log('first: %s' % self.menulist)
 		if get_pid("TorrServer") and self.menulist:
 			self.evntNm = str(self["menu"].getCurrent()[0])
 			if DEBUG: write_log('first yes: %s' % self.evntNm)
@@ -213,7 +213,7 @@ class TorrSettings(Screen):
 				return skin
 		else:
 			print '1280'
-			with open('/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/skins/main.xml', 'r') as f:
+			with open('/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/skins/mainHD.xml', 'r') as f:
 				skin = f.read()
 				return skin
 
@@ -336,7 +336,8 @@ class TorrSettings(Screen):
 	def getPoster(self):
 		if self.evntNm == '':
 			return ''
-		self.year = self.filterSearch()
+		self.year = self.filterSearch(str(self.evntNm))
+		if DEBUG: write_log('self.year: %s' % self.year)
 		self.filtername()
 		self.evntNm = REGEX.sub('', self.evntNm).strip()
 		self.evntNm = self.evntNm.replace(".", " ").strip()
@@ -360,12 +361,6 @@ class TorrSettings(Screen):
 					'include_adult': 1,
 					}
 				
-				if self.year:
-					if DEBUG: write_log('year: %s' % self.year)
-					# params.update({
-						# 'primary_release_year': self.year,
-						# })
-
 				url = 'https://api.themoviedb.org/3/search/multi'
 
 				data = get_url(url, params)
@@ -373,34 +368,51 @@ class TorrSettings(Screen):
 					f.write(data)
 					f.close()
 				data = json.loads(data)
-
+			
 			if data.get('results'):
-				pfname = data['results'][0]['poster_path']
+				json_item = data['results']
+
+				i = k = 0
+				exitFlag=False
+				for item in json_item:
+					if item['media_type'] == 'movie' or item['media_type'] == 'tv':
+						if "release_date" in item:
+							release_date = self.filterSearch(item['release_date'])
+							if DEBUG: write_log('release_date %s ' % i + 'is %s ' % release_date)
+							if self.year == release_date:
+								k = i
+								if DEBUG: write_log('year=release_date: %s' % release_date)
+								exitFlag=True
+					if(exitFlag):
+						break
+					i += 1
+										
+				pfname = str(json_item[k]['poster_path'])
 				if pfname:
 					self.tempfile = temp_dir + pfname
 					self.downloadPoster('https://image.tmdb.org/t/p/w300%s' % pfname, self.tempfile)
 					if DEBUG: write_log(json.dumps(pfname[1:], indent=4, sort_keys=True))
-				if "title" in data['results'][0]:
-					self['title'].setText(str(data['results'][0]['title']))
-					if DEBUG: write_log('title: %s' % data['results'][0]['title'])
+				if "title" in json_item[k]:
+					self['title'].setText(str(json_item[k]['title']))
+					if DEBUG: write_log('title: %s' % json_item[k]['title'])
 				else:
-					self['title'].setText(str(data['results'][0]['name']))
-					if DEBUG: write_log('name: %s' % data['results'][0]['name'])
-				if "original_title" in data['results'][0]:
-					self['original_title'].setText(str(data['results'][0]['original_title']))
+					self['title'].setText(str(json_item[k]['name']))
+					if DEBUG: write_log('name: %s' % json_item[k]['name'])
+				if "original_title" in json_item[k]:
+					self['original_title'].setText(str(json_item[k]['original_title']))
 				else:
-					self['original_title'].setText(str(data['results'][0]['original_name']))
+					self['original_title'].setText(str(json_item[k]['original_name']))
 								
-				Ratingtext = _("User Rating") + ": %s /10" % str(data['results'][0]['vote_average']) + ' (' + _("Votes") + ": " + str(data['results'][0]['vote_count']) + ')'
+				Ratingtext = _("User Rating") + ": %s /10" % str(json_item[k]['vote_average']) + ' (' + _("Votes") + ": " + str(json_item[k]['vote_count']) + ')'
 				if DEBUG: write_log('Ratingtext: %s' % Ratingtext)
-				self.ratingstars = int(10*(float(str(data['results'][0]['vote_average']))))
+				self.ratingstars = int(10*(float(str(json_item[k]['vote_average']))))
 				self["starsbg"].show()
 				if DEBUG: write_log('self.ratingstars: %s' % self.ratingstars)
 				self["stars"].setValue(self.ratingstars)
 				self["stars"].show()
-				self['overview'].setText(str(data['results'][0]['overview']))
+				self['overview'].setText(str(json_item[k]['overview']))
 				self["vote_average"].setText(Ratingtext)				
-				self["overview"].setText(str(data['results'][0]['overview']))
+				self["overview"].setText(str(json_item[k]['overview']))
 			else:
 				self.tempfile = '/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/images/poster_none.png'
 				self['title'].setText(self.evntNm)
@@ -412,7 +424,7 @@ class TorrSettings(Screen):
 
 		except Exception as e:
 			if DEBUG:
-				write_log('An error occurred while processing JSON request: %s' % repr(e))
+				write_log('JSON request: %s' % traceback.format_exc())
 
 	def showPoster(self):
 		if self.evntNm == '':
@@ -455,10 +467,9 @@ class TorrSettings(Screen):
 				self['statusbar'].setText(urlreq.URLError)
 				return False
 				
-	def filterSearch(self):
-		sd = self.evntNm
+	def filterSearch(self, filmname):
 		try:
-			yr = [ _y for _y in re.findall(r'\d{4}', sd) if '1930' <= _y <= '%s' % gmtime().tm_year ]
+			yr = [ _y for _y in re.findall(r'\d{4}', filmname) if '1930' <= _y <= '%s' % gmtime().tm_year ]
 			return '%s' % yr[-1] if yr else ''
 		except:
 			return ''
