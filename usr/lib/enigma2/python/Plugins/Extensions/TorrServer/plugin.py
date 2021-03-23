@@ -207,7 +207,7 @@ class TorrSettings(Screen):
 			screenWidth = getDesktop(0).size().width()
 		except:
 			screenWidth = 720
-		if screenWidth >= 1280:
+		if screenWidth > 1280:
 			with open('/usr/lib/enigma2/python/Plugins/Extensions/TorrServer/skins/main.xml', 'r') as f:
 				skin = f.read()
 				return skin
