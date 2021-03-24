@@ -263,8 +263,8 @@ class TorrSettings(Screen):
 			if DEBUG: write_log('cross menu: %s' % self.evntNm)
 			self.showPoster()
 	
-	def start_stop(self):
-		if get_pid("TorrServer") == False:
+	def start_stop(self, kill=False):
+		if get_pid("TorrServer") == False and kill == False:
 			fh = open(os.devnull, 'wb')
 			os.system('export GODEBUG=madvdontneed=1')
 			p = subprocess.Popen(['/usr/bin/TorrServer'], shell=False, stdout = fh, stderr = fh)
@@ -321,7 +321,7 @@ class TorrSettings(Screen):
 			res = download_torr(url)
 		elif get_version() != new_ver:
 			self['statusbar'].setText(_('TorrServer is') + " " + _('try update :)'))
-			self.start_stop()
+			self.start_stop(True)
 			if DEBUG: write_log('find new ver - try download: %s' % version)
 			res = download_torr(url)
 			self.start_stop()
