@@ -595,6 +595,8 @@ class TorrConf(ConfigListScreen, Screen):
          'cancel': self.exit,
          'red': self.exit}, -2)
         self.get_status()
+        self.timer = eTimer()
+        self.ftimer = eTimer()
 
     def save(self):
         for x in self['config'].list:
@@ -652,6 +654,25 @@ class TorrConf(ConfigListScreen, Screen):
         if res == True:
             self["key_red"].setText(_("Check updates"))
             self['statusbar'].setText(_('TorrServer is') + " " + _('installed :)'))
+
+    def start_stop(self):
+        if get_pid("TorrServer") == False:
+            fh = open(os.devnull, 'wb')
+            os.system('export GODEBUG=madvdontneed=1')
+            p = subprocess.Popen(['/usr/bin/TorrServer'], shell=False, stdout = fh, stderr = fh)
+            fh.close()
+            time.sleep(0.5)
+            menulist = []
+            self.timer = eTimer()
+            self.timer.callback.append(self.get_status)
+            self.timer.start(5000, False)
+            self.ftimer.start(1000, True)
+        else:
+            os.system("killall TorrServer")
+            time.sleep(0.5)
+            self.timer.stop()
+        self.get_status()
+        self.onClose.append(self.timer.stop)
 
 def autoStart(reason, **kwargs): # starts DURING the Enigma2 booting
     if config.plugins.torrserver.autostart.value == True and get_pid("TorrServer") == False and os.path.isfile(torr_path) == True:
